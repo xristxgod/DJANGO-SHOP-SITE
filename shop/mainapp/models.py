@@ -2,9 +2,15 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
+from django.urls import reverse
 
 User = get_user_model()
+
+def get_product_url(obj, viewname):
+    ct_model = obj.__class__.meta.model_name
+    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug': obj.slug})
+
+
 
 class LatestProductManager:
 
@@ -24,7 +30,6 @@ class LatestProductManager:
                         products, key=lambda x: x.__class__.meta.model_name.startswith(with_respect_to), reverse=True
                     )
         return products
-
 
 class LatestProduct:
 
@@ -47,6 +52,10 @@ class Category(models.Model):
 class Product(models.Model):
 
     ''' Товар '''
+
+    MIN_RESOLUTION = (400, 400)
+    MAX_RESOLUTION = (4000, 4000)
+    MAX_IMG_SIZE = 3145728
 
     title = models.CharField(max_length=255, verbose_name='Наименование')
     slug = models.SlugField(unique=True, verbose_name='Слаг')
@@ -77,6 +86,9 @@ class Notebook(Product):
     def __str__(self):
         return f'{self.category.name} : {self.title}'
 
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
     class Meta:
         verbose_name = 'Ноутбук'
         verbose_name_plural = 'Ноутбуки'
@@ -97,6 +109,9 @@ class Smartphone(Product):
 
     def __str__(self):
         return f'{self.category.name} : {self.title}'
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
 
     class Meta:
         verbose_name = 'Смартфон'
