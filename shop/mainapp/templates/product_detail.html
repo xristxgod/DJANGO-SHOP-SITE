@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
+{% load specification %}
 
+{% block title %}{{ product.title }} : {{ block.super }}{% endblock %}
 {% block precontent %}
 <div class="container px-7 px-lg-5 mt-5">
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 justify-content-center">
+
         {% block content %}
         <div class="col-md-15">
             <img src="{{ product.image.url }}" style="max-width: 100%; height: auto;" >
@@ -18,12 +21,9 @@
                 <br>
             </div>
             <h5> Характеристика </h5>
-            <h6>Диагональ: {{ product.diagonal }} </h6>
-            <h6>Дисплаей: {{ product.display }} </h6>
-            <h6>Процессор: {{ product.processor_freq }} </h6>
-            <h6>Оперативная память: {{ product.ram }} </h6>
-            <h6>Видеокарта: {{ product.video }} </h6>
-            <h6>Время работы аккамулятора: {{ product.time_without_charge }} </h6>
+
+            {{ product|product_spec }}
+
             <br>
         </div>
 
