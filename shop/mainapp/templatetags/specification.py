@@ -1,6 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
-from mainapp.models import Smartphone
+from mainapp.models import Smartphone, Category, LatestProduct, CartProduct, Cart, Customer
 
 register = template.Library()
 
@@ -57,6 +57,13 @@ def product_spec(product):
     #         # PRODUCT_SPEC['smartphone'].pop('Наличие SD карты')
     #     else:
     #         PRODUCT_SPEC['smartphone']['Максимальный обьем SD катры'] = 'sd_volume_max'
-
     return mark_safe(TABLE_HEAD + get_product_spec(product, model_name) + TABLE_TAIL)
 
+# @register.inclusion_tag('inc/_nav.html')
+# def get_category_and_count():
+#     categories = Category.objects.get_categories_for_left_sidebar()
+#     return {
+#         'categories': categories,
+#
+#     }
+# <!--{% get_category_and_count %}-->

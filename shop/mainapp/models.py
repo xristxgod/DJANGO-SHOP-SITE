@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.urls import reverse
 
 User = get_user_model()
+
 def get_models_for_count(*model_names):
     return [models.Count(model_name) for model_name in model_names]
 
@@ -60,7 +61,6 @@ class CategoryManager(models.Manager):
             for c in qs
         ]
         return data
-
 
 class Category(models.Model):
 
@@ -206,7 +206,7 @@ class Customer(models.Model):
     address = models.CharField(max_length=255, verbose_name='Адрес')
 
     def __str__(self):
-        return f'Покупатель: {self.user.first_name} {self.user.last_name}'
+        return "Покупатель: {} {}".format(self.user.first_name, self.user.last_name)
 
     class Meta:
         verbose_name = 'Покупатель'

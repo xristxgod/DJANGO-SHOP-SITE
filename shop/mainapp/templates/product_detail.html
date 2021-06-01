@@ -9,26 +9,35 @@
         {% block content %}
         <div class="col-md-15">
             <img src="{{ product.image.url }}" style="max-width: 100%; height: auto;" >
+
         </div>
+
         <div class="col-md-8">
 
             <h3>{{ product.title }}</h3>
             <p><h5>Цена: {{ product.price }} руб</h5></p>
-
+            <hr>
                 <h5>Описание:</h5>
             <div class="col-md-12">
                 <p>{{ product.description }}</p>
-                <br>
+                <hr>
+                <a href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug %}"><button class="btn btn-danger mt-3 mb-4">Добавить в корзину</button> </a>
             </div>
+
             <h5> Характеристика </h5>
 
             {{ product|product_spec }}
 
-            <br>
+
+
+
         </div>
 
         {% endblock %}
 
+
     </div>
+
 </div>
+
 {% endblock %}
