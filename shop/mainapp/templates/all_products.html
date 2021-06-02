@@ -11,19 +11,19 @@
             <div class="col mb-5">
                 <div class="card h-100">
                     <!-- Product image-->
-                   <a href=""><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.title }}" /></a>
+                   <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.title }}" /></a>
                     <!-- Product details-->
                     <div class="card-body p-4">
                         <div class="text-center">
                             <!-- Product name-->
-                            <a href="" style="text-decoration: none; color: #6c757d;"><h5 class="fw-bolder">{{ product.title }}</h5></a>
+                            <a href="{{ product.get_absolute_url }}" style="text-decoration: none; color: #6c757d;"><h5 class="fw-bolder">{{ product.title }}</h5></a>
                             <!-- Product price-->
                             {{ product.price }} руб
                         </div>
                     </div>
                     <!-- Product actions-->
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Добавить</a></div>
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="">Добавить</a></div>
                     </div>
 
                 </div>

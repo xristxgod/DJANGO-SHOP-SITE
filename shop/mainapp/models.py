@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.urls import reverse
 
+
 User = get_user_model()
 
 def get_models_for_count(*model_names):
@@ -101,6 +102,9 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def get_model_name(self):
+        return self.__class__.__name__.lower()
+
     class Meta:
         abstract = True
         verbose_name = 'Товар'
@@ -123,6 +127,7 @@ class Notebook(Product):
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
 
+
     class Meta:
         verbose_name = 'Ноутбук'
         verbose_name_plural = 'Ноутбуки'
@@ -136,10 +141,8 @@ class Smartphone(Product):
     resolutions = models.CharField(max_length=255, verbose_name='Разрешение экрана')
     accum_volum = models.CharField(max_length=255, verbose_name='Обьем ботареи')
     ram = models.CharField(max_length=255, verbose_name='Оперативная память')
-    # Сделать выпадающий список, если есть SD карта то выпадает список
-    # На котором написанно, 64 128 248 гб
     sd = models.BooleanField(default=False, verbose_name='Наличеие SD карты')
-    sd_volume_max = models.CharField(max_length=255, blank=True, verbose_name='Максимальный обьем встраемой памяти')
+    sd_volume_max = models.CharField(max_length=255,  null=True, blank=True, verbose_name='Максимальный объем встраивамой памяти')
     main_cam_mp = models.CharField(max_length=255, verbose_name='Главная камера')
     frontal_cam_mp = models.CharField(max_length=255, verbose_name='Фронтальная камера')
 
@@ -149,11 +152,14 @@ class Smartphone(Product):
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
 
+
     # @property
     # def sd(self):
     #     if self.sd:
     #         return 'Да'
     #     return 'Нет'
+    # Сделать выпадающий список, если есть SD карта то выпадает список
+    # На котором написанно, 64 128 248 г
 
     class Meta:
         verbose_name = 'Смартфон'
@@ -174,24 +180,40 @@ class CartProduct(models.Model):
     def __str__(self):
         return f'Продукты: {self.content_object.title}'
 
+    def save(self, *args, **kwargs):
+        self.final_price = self.qty * self.content_object.price
+        super().save(*args, **kwargs)
+
+    # def get_content_model_name(self):
+    #     return self.__class__._meta.model_name
+
     class Meta:
-        verbose_name = 'Корзина товара'
-        verbose_name_plural = 'Корзина товаров'
+        verbose_name = 'Товар в корзине'
+        verbose_name_plural = 'Товары в корзине'
 
 class Cart(models.Model):
 
     ''' Корзина '''
 
-    owner = models.ForeignKey('Customer', verbose_name='Владелец', on_delete=models.CASCADE)
+    owner = models.ForeignKey('Customer', null=True, verbose_name='Владелец', on_delete=models.CASCADE)
     products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_product = models.PositiveIntegerField(default=0)
-    final_price = models.DecimalField(max_digits=9, verbose_name='Общая цена', decimal_places=2)
+    final_price = models.DecimalField(max_digits=9, default=0, verbose_name='Общая цена', decimal_places=2)
     in_order = models.BooleanField(default=False)
     for_anonymous_user = models.BooleanField(default=False)
 
 
     def __str__(self):
         return str(self.id)
+
+    def save(self, *args, **kwargs):
+        cart_date = self.products.aggregate(models.Sum('final_price'), models.Count('id'))
+        if cart_date.get('final_price__sum'):
+            self.final_price = cart_date['final_price__sum']
+        else:
+            self.final_price = 0
+        self.total_product = cart_date['id__count']
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Корзина'
@@ -202,8 +224,8 @@ class Customer(models.Model):
     ''' Покупатель '''
 
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    phone = models.CharField(max_length=28, verbose_name='Номер телефона')
-    address = models.CharField(max_length=255, verbose_name='Адрес')
+    phone = models.CharField(max_length=28, verbose_name='Номер телефона', null=True, blank=True)
+    address = models.CharField(max_length=255, verbose_name='Адрес', null=True, blank=True)
 
     def __str__(self):
         return "Покупатель: {} {}".format(self.user.first_name, self.user.last_name)

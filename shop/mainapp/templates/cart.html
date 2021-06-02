@@ -1,30 +1,64 @@
 {% extends 'base.html' %}
 {% block title %} Корзина : {{ block.super }}{% endblock %}
 
+{% block precontent %}
 
-{% block content %}
-<h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Наименование</th>
-            <th scope="col">Изображение</th>
-            <th scope="col">Цена</th>
-            <th scope="col">Кол-во</th>
-            <th scope="col">Общая цена</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in cart.products.all %}
-        <tr>
-            <<th scope="row">{{ item.content_object.title}}</th>
-            <td style="width: 75px; height: auto; border: none;"><img src="{{ item.content_object.image.url }}" class="img-fluid"></td>
-            <td>{{ item.content_object.price }}</td>
-            <td>{{ item.qty }}</td>
-            <td>{{ item.final_price }} руб</td>
-        </tr>
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         {% endfor %}
-    </tbody>
-</table>
+        {% endif%}
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% block content %}
+            {% if cart.products.count %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Наименование</th>
+                    <th scope="col">Изображение</th>
+                    <th scope="col">Цена</th>
+                    <th scope="col">Кол-во</th>
+                    <th scope="col">Общая цена</th>
+                    <th scope="col">Действие</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in cart.products.all %}
+                <tr>
+                    <th scope="row">{{ item.content_object.title}}</th>
+                    <td style="width: 75px; height: auto; border: none;"><img src="{{ item.content_object.image.url }}" class="img-fluid"></td>
+                    <td>{{ item.content_object.price }}</td>
+                    <td>
+                        <form action="{% url 'change_qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}" method="POST">
+                            {% csrf_token %}
+                            <input type="number" class="form-control" name="qty" style="width: 70px;" min="1" value="{{ item.qty }}">
+                            <br>
+                            <input type="submit" class="btn btn-primary" value="ОК">
+                        </form>
+                    </td>
+                    <td>{{ item.final_price }} руб</td>
+                    <td>
+                        <a href="{% url 'delete_from_cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}"><button class="btm btn-danger">Убрать из корзины</button></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2"></td>
+                    <td>Итог:</td>
+                    <td>{{ cart.total_products }}</td>
+                    <td><strong>{{ cart.final_price }} руб</strong></td>
+                </tr>
+                </tbody>
+            </table>
+            {% endif %}
+            {% endblock %}
+        </div>
+    </div>
+</section>
 {% endblock %}
