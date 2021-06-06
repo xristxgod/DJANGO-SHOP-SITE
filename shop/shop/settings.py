@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mainapp.apps.MainappConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,5 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # <!--    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />-->
+
+CRISPY_TEPLATE_PACK = 'bootstrap5'

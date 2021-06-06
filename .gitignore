@@ -1,3 +1,4 @@
 .idea/
 venv/
 shop/db.sqlite3
+.gitignore
