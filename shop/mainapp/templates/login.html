@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Авторизация : {{ block.super }}{% endblock %}
+
+{% block precontent %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% block content %}
+                <div class="col-md-6 ">
+                    <h3 class="text-central">Авторизация</h3>
+                    <hr>
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <br>
+                        <input type="submit" class="btn btn-success" value="Войти">
+                    </form>
+                </div>
+
+
+            {% endblock %}
+        </div>
+    </div>
+</section>
+{% endblock %}

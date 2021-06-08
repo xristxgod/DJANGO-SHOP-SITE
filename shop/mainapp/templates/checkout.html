@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-
+{% block title %} Оформление заказа : {{ block.super }}{% endblock %}
 
 {% block precontent %}
 <section class="py-5">
@@ -54,7 +54,7 @@
         <form action="{% url 'make_order' %}" method="POST">
             {% csrf_token %}
             {{ form|crispy }}
-            <input type="submit" class="btn btn-success btn-block" values="Оформить заказ">
+            <input type="submit" class="btn btn-success btn-block" value="Оформить заказ">
         </form>
 
     </div>
